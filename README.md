@@ -1,2 +1,1 @@
-# Live
-  todo-app-aug.vercel.app
+Visit [TODO App](todo-app-aug.vercel.app)
