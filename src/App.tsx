@@ -1,6 +1,6 @@
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
-type TODO = {
+type TODOS = {
   id: number;
   title: string;
   isComplete: boolean;
@@ -9,11 +9,27 @@ type TODO = {
 function App() {
   const [todoInput, setTodoInput] = useState("");
 
-  const [todos, setTodos] = useState<TODO>([]);
+  const [todos, setTodos] = useState<TODOS>([]);
+
+  const getLocalStorageTodos = () => {
+    const lStorageTodos = localStorage.getItem("todos");
+    if (lStorageTodos) {
+      setTodos(JSON.parse(lStorageTodos));
+    }
+  };
+
+  const updateTodos = (todos: TODOS) => {
+    setTodos(todos);
+    localStorage.setItem("todos", JSON.stringify(todos));
+  };
+
+  useEffect(() => {
+    // get todos from local storage
+    getLocalStorageTodos();
+  }, []);
 
   const handleInputChange = (e: React.FormEvent<HTMLInputElement>) => {
     const input = e.currentTarget.value;
-    console.log(input);
     setTodoInput(input);
   };
 
@@ -23,39 +39,32 @@ function App() {
 
     const newTodo = { id, title: todoInput, isComplete: false };
 
-    console.log(id);
-    console.log(newTodo);
-    setTodos((prevTodos) => [...prevTodos, newTodo]);
+    const updatedTodos = [...todos, newTodo];
+
+    updateTodos(updatedTodos);
     setTodoInput("");
   };
 
   const handleRemoveTodo = (todoId: number) => {
-    setTodos((prevTodos) => {
-      return prevTodos.filter((todo) => todo.id !== todoId);
-    });
+    const updatedTodos = todos.filter((todo) => todo.id !== todoId);
+
+    updateTodos(updatedTodos);
   };
-
-  // const getTodos=useMemo(()=>{
-
-  // },[todoId, status])
 
   const toggleStatus = (todoId: number) => {
     // use Map?
 
-    setTodos((prevTodos=>{
-      return prevTodos.map((todo) => {
-        if (todo.id === todoId) return { ...todo, isComplete: !todo.isComplete };
-        return todo;
-      });
-    }))
+    const updatedTodos = todos.map((todo) =>
+      todo.id === todoId ? { ...todo, isComplete: !todo.isComplete } : todo
+    );
+
+    updateTodos(updatedTodos);
   };
 
-  
-  console.log(todos)
   return (
     <main className="max-h-screen">
       <article className="flex justify-Hello tcenter flex-col px-6 py-4 ">
-        <h1 className="text-center text-slate-700">TODO</h1>
+        <h1 className="text-center text-slate-900 text-lg bold">Tasks</h1>
 
         <section className="flex justify-center gap-2 mt-6  ">
           <input
@@ -78,8 +87,8 @@ function App() {
           </button>
         </section>
 
-        <section className="flex justify-center ">
-          <ul className="border-1 border-slate-400 border-solid rounded-md min-h-[calc(100vh_-_200px)] w-96 my-6 px-6 py-4 bg-slate-50 ">
+        <section className="flex justify-center  ">
+          <ul className="border-1 border-slate-400 border-solid rounded-md h-[calc(100vh_-_200px)]  w-96 my-6 px-4 py-4 bg-slate-50 overflow-y-auto ">
             {(!todos || todos.length === 0) && (
               <p className="italic text-slate-500 font-extralight text-sm  ">
                 Add some tasks you would like to do today...
@@ -89,7 +98,7 @@ function App() {
             {todos.map((todo) => (
               <li
                 key={todo.id}
-                className="flex justify-start  items-center gap-2 w-full mb-2 relative"
+                className="flex justify-start  items-center gap-2 w-full mb-2 relative hover:bg-slate-200 p-2 rounded-sm hover:text-slate-600"
               >
                 <input
                   type="checkbox"
@@ -99,14 +108,16 @@ function App() {
                 />
                 <label
                   htmlFor={todo.id.toString()}
-                  className={`${todo.isComplete ? "line-through text-slate-500" : ""} `}
+                  className={`${
+                    todo.isComplete ? "line-through text-slate-500" : ""
+                  } hover:cursor-pointer`}
                 >
                   {todo.title}
                 </label>
 
                 <button
                   onClick={() => handleRemoveTodo(todo.id)}
-                  className="w-5 h-5 rounded-[50%] bg-rose-500 text-white flex items-center justify-center absolute right-0 top-1/2 -translate-y-1/2"
+                  className="w-5 h-5 rounded-[50%] bg-rose-500 hover:bg-rose-600 text-white  flex items-center justify-center absolute right-2 top-1/2 -translate-y-1/2"
                 >
                   &#x2715;
                 </button>
