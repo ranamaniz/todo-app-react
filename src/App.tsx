@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 type TODO = {
   id: number;
   title: string;
+  isComplete: boolean;
 }[];
 
 function App() {
@@ -20,7 +21,7 @@ function App() {
     const id = Math.floor(Date.now() - Math.random() * 1000);
     // TODO: use uuid later
 
-    const newTodo = { id, title: todoInput };
+    const newTodo = { id, title: todoInput, isComplete: false };
 
     console.log(id);
     console.log(newTodo);
@@ -34,6 +35,23 @@ function App() {
     });
   };
 
+  // const getTodos=useMemo(()=>{
+
+  // },[todoId, status])
+
+  const toggleStatus = (todoId: number) => {
+    // use Map?
+
+    setTodos((prevTodos=>{
+      return prevTodos.map((todo) => {
+        if (todo.id === todoId) return { ...todo, isComplete: !todo.isComplete };
+        return todo;
+      });
+    }))
+  };
+
+  
+  console.log(todos)
   return (
     <main className="max-h-screen">
       <article className="flex justify-Hello tcenter flex-col px-6 py-4 ">
@@ -63,7 +81,7 @@ function App() {
         <section className="flex justify-center ">
           <ul className="border-1 border-slate-400 border-solid rounded-md min-h-[calc(100vh_-_200px)] w-96 my-6 px-6 py-4 bg-slate-50 ">
             {(!todos || todos.length === 0) && (
-              <p className="italic text-slate-800">
+              <p className="italic text-slate-500 font-extralight text-sm  ">
                 Add some tasks you would like to do today...
               </p>
             )}
@@ -76,9 +94,15 @@ function App() {
                 <input
                   type="checkbox"
                   id={todo.id.toString()}
-                  className="mr-2"
+                  className="mr-2 hover:cursor-pointer "
+                  onClick={() => toggleStatus(todo.id)}
                 />
-                <label htmlFor={todo.id.toString()}>{todo.title}</label>
+                <label
+                  htmlFor={todo.id.toString()}
+                  className={`${todo.isComplete ? "line-through text-slate-500" : ""} `}
+                >
+                  {todo.title}
+                </label>
 
                 <button
                   onClick={() => handleRemoveTodo(todo.id)}
