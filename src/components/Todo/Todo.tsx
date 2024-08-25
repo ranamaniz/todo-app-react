@@ -2,15 +2,11 @@ import { TODO } from "../../types";
 
 type TODO_ITEM_PROPS = {
   todo: TODO;
-  handleUpdateTodo: (id: string) => void;
-  handleRemoveTodo: (id: string) => void;
+  onUpdateTodo: (id: string) => void;
+  onRemoveTodo: (id: string) => void;
 };
 
-const TodoItem = ({
-  todo,
-  handleUpdateTodo,
-  handleRemoveTodo,
-}: TODO_ITEM_PROPS) => {
+const Todo = ({ todo, onUpdateTodo, onRemoveTodo }: TODO_ITEM_PROPS) => {
   return (
     <li
       key={todo._id}
@@ -21,7 +17,7 @@ const TodoItem = ({
         checked={!!todo.isComplete}
         id={todo._id.toString()}
         className="mr-2 hover:cursor-pointer "
-        onClick={() => handleUpdateTodo(todo._id)}
+        onClick={() => onUpdateTodo(todo._id)}
       />
       <label
         htmlFor={todo._id.toString()}
@@ -33,7 +29,7 @@ const TodoItem = ({
       </label>
 
       <button
-        onClick={() => handleRemoveTodo(todo._id)}
+        onClick={() => onRemoveTodo(todo._id)}
         className="w-5 h-5 rounded-[50%] bg-rose-500 hover:bg-rose-600 text-white  flex items-center justify-center absolute right-2 top-1/2 -translate-y-1/2"
       >
         &#x2715;
@@ -42,4 +38,4 @@ const TodoItem = ({
   );
 };
 
-export default TodoItem;
+export default Todo;

@@ -10,7 +10,7 @@ type LOADER_PROPS = {
 const Loader = React.memo(
   ({ size, className = "", invertColor = false }: LOADER_PROPS) => {
     const sizes: { [key: string]: string } = {
-      small: "1.5rem",
+      small: "1.25rem",
       normal: "2.5rem",
       large: "3.75rem",
     };
@@ -26,7 +26,7 @@ const Loader = React.memo(
 
     const baseStyle = !invertColor
       ? "bg-white border-blue-100 border-t-blue-500"
-      : "bg-transparent border-white border-t-blue-500";
+      : "bg-transparent border-white border-t-gray-400";
 
     return (
       <div
