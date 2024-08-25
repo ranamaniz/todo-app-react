@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Profiler, useEffect, useState } from "react";
+import { Profiler, useCallback, useEffect, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import toast, { Toaster } from "react-hot-toast";
+import Loader from "./components/Input/Loader";
+import Button from "./components/Button";
 
 type TODOS = {
   _id: string;
@@ -9,10 +11,24 @@ type TODOS = {
   isComplete: boolean;
 }[];
 
+type IS_LOADING = {
+  fetching: boolean;
+  adding: boolean;
+  deleting: boolean;
+  updating: boolean;
+};
+
 function App() {
   const [todoInput, setTodoInput] = useState("");
 
   const [todos, setTodos] = useState<TODOS>([]);
+
+  const [isLoading, setIsLoading] = useState<IS_LOADING>({
+    fetching: false,
+    adding: false,
+    deleting: false,
+    updating: false,
+  });
 
   // const getLocalStorageTodos = () => {
   //   const lStorageTodos = localStorage.getItem("todos");
@@ -23,6 +39,7 @@ function App() {
 
   const getTodos = async () => {
     try {
+      setIsLoading((prevIsLoading) => ({ ...prevIsLoading, fetching: true }));
       const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/todos`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
@@ -34,6 +51,8 @@ function App() {
     } catch (e) {
       console.log(e);
       toast.error("Sorry, couldn't fetch todos");
+    } finally {
+      setIsLoading((prevIsLoading) => ({ ...prevIsLoading, fetching: false }));
     }
   };
 
@@ -55,8 +74,10 @@ function App() {
     setTodoInput(input);
   };
 
-  const handleAddTodo = async () => {
+  const handleAddTodo = useCallback(async () => {
     try {
+      setIsLoading((prevIsLoading) => ({ ...prevIsLoading, adding: true }));
+
       const newTodo = { title: todoInput, isComplete: false };
 
       const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/todos`, {
@@ -81,11 +102,15 @@ function App() {
       console.log(e);
 
       toast.error("Something went wrong, couldn't add todo");
+    } finally {
+      setIsLoading((prevIsLoading) => ({ ...prevIsLoading, adding: false }));
     }
-  };
+  }, [todoInput, todos, updateTodos]);
 
   const handleRemoveTodo = async (todoId: string) => {
     try {
+      setIsLoading((prevIsLoading) => ({ ...prevIsLoading, updating: true }));
+
       const res = await fetch(
         `${import.meta.env.VITE_API_BASE_URL}/todos/${todoId}`,
         { method: "DELETE" }
@@ -104,17 +129,51 @@ function App() {
       console.log(e);
 
       toast.error("Something went wrong, could not delete");
+    } finally {
+      setIsLoading((prevIsLoading) => ({ ...prevIsLoading, updating: false }));
     }
   };
 
-  const toggleStatus = (todoId: string) => {
-    // use Map?
+  const toggleStatus = async (todoId: string) => {
+    try {
+      setIsLoading((prevIsLoading) => ({ ...prevIsLoading, updating: true }));
 
-    const updatedTodos = todos.map((todo) =>
-      todo._id === todoId ? { ...todo, isComplete: !todo.isComplete } : todo
-    );
+      // use Map?
+      const updatedTodo = todos.find((todo) => todo._id === todoId);
+      if (!updatedTodo) return;
 
-    updateTodos(updatedTodos);
+      const reqBody = { isComplete: !updatedTodo.isComplete };
+
+      const res = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/todos/${todoId}`,
+        {
+          method: "PUT",
+          body: JSON.stringify(reqBody),
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(
+          errorData.message || "Sorry, failed to update the todo"
+        );
+      }
+
+      const data = await res.json();
+
+      setTodos((todos) => {
+        return todos.map((todo) =>
+          todo._id === data.data._id ? data.data : todo
+        );
+      });
+      // updateTodos(data);
+    } catch (e) {
+      console.log(e);
+      toast.error("Could not update the todo");
+    } finally {
+      setIsLoading((prevIsLoading) => ({ ...prevIsLoading, updating: false }));
+    }
   };
 
   function onRender(
@@ -148,51 +207,63 @@ function App() {
                 value={todoInput}
                 placeholder="Just do it!"
               />
-              <button
-                className="bg-blue-500 rounded-md py-2 px-6 text-white"
-                onClick={handleAddTodo}
-              >
+              <Button onClick={handleAddTodo} isLoading={isLoading.adding}>
                 Add
-              </button>
+              </Button>
             </section>
 
-            <section className="flex justify-center  ">
-              <ul className="border-1 border-slate-400 border-solid rounded-md h-[calc(100vh_-_200px)]  w-96 my-6 px-4 py-4 bg-slate-50 overflow-y-auto ">
-                {(!todos || todos.length === 0) && (
-                  <p className="italic text-slate-500 font-extralight text-sm  ">
-                    Add some tasks you would like to do today...
-                  </p>
-                )}
+            <section className="flex justify-center relative my-4">
+              {(isLoading.updating || isLoading.fetching) && (
+                <Loader className="absolute top-1/2 left1/2 -translate-1/2 z-10" />
+              )}
+              <section
+                className={`border-1 border-slate-400 border-solid rounded-md h-[calc(100vh_-_200px)]  w-96  bg-slate-50 overflow-y-auto relative ${
+                  isLoading.updating ? "pointer-events-none opacity-50" : ""
+                }`}
+              >
+                <ul className="relative">
+                  {isLoading.fetching && (
+                    <p className="px-4 py-4">Loading...</p>
+                  )}
 
-                {todos.map((todo) => (
-                  <li
-                    key={todo._id}
-                    className="flex justify-start  items-center gap-2 w-full mb-2 relative hover:bg-slate-200 p-2 rounded-sm hover:text-slate-600"
-                  >
-                    <input
-                      type="checkbox"
-                      id={todo._id.toString()}
-                      className="mr-2 hover:cursor-pointer "
-                      onClick={() => toggleStatus(todo._id)}
-                    />
-                    <label
-                      htmlFor={todo._id.toString()}
-                      className={`${
-                        todo.isComplete ? "line-through text-slate-500" : ""
-                      } hover:cursor-pointer`}
-                    >
-                      {todo.title}
-                    </label>
+                  {(!Array.isArray(todos) || !todos || todos.length === 0) && (
+                    <p className="italic text-slate-500 font-extralight text-sm px-4 py-4 ">
+                      Add some tasks you would like to do today...
+                    </p>
+                  )}
 
-                    <button
-                      onClick={() => handleRemoveTodo(todo._id)}
-                      className="w-5 h-5 rounded-[50%] bg-rose-500 hover:bg-rose-600 text-white  flex items-center justify-center absolute right-2 top-1/2 -translate-y-1/2"
-                    >
-                      &#x2715;
-                    </button>
-                  </li>
-                ))}
-              </ul>
+                  {Array.isArray(todos) &&
+                    todos.map((todo) => (
+                      <li
+                        key={todo._id}
+                        className="flex justify-start  items-center gap-2 w-full mb-2 relative hover:bg-slate-200 p-2 rounded-sm hover:text-slate-600 px-4 py-4"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={!!todo.isComplete}
+                          id={todo._id.toString()}
+                          className="mr-2 hover:cursor-pointer "
+                          onClick={() => toggleStatus(todo._id)}
+                        />
+                        <label
+                          htmlFor={todo._id.toString()}
+                          className={`${
+                            todo.isComplete ? "line-through text-slate-500" : ""
+                          } hover:cursor-pointer`}
+                        >
+                          {todo.title}
+                        </label>
+
+                        <button
+                          onClick={() => handleRemoveTodo(todo._id)}
+                          className="w-5 h-5 rounded-[50%] bg-rose-500 hover:bg-rose-600 text-white  flex items-center justify-center absolute right-2 top-1/2 -translate-y-1/2"
+                        >
+                          &#x2715;
+                        </button>
+                      </li>
+                    ))}
+                </ul>
+              </section>
             </section>
           </article>
           <Toaster />
