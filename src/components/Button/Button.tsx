@@ -1,5 +1,5 @@
 import React from "react";
-import Loader from "../Input/Loader";
+import { Spinner } from "../Spinner";
 
 type ButtonProps = {
   children: React.ReactNode;
@@ -26,7 +26,7 @@ const Button = React.memo(
       >
         <span className="flex justify-center gap-2 ">{children}</span>
         <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-          {isLoading && <Loader size="small" invertColor />}
+          {isLoading && <Spinner size="small" invertColor />}
         </span>
       </button>
     );

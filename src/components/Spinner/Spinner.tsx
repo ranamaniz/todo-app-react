@@ -1,21 +1,21 @@
 import React from "react";
 import "./Spinner.css";
 
-type LOADER_PROPS = {
+type SPINNER_PROPS = {
   size?: string | number;
   className?: string;
   invertColor?: boolean;
 };
 
-const Loader = React.memo(
-  ({ size, className = "", invertColor = false }: LOADER_PROPS) => {
+const Spinner = React.memo(
+  ({ size, className = "", invertColor = false }: SPINNER_PROPS) => {
     const sizes: { [key: string]: string } = {
       small: "1.25rem",
       normal: "2.5rem",
       large: "3.75rem",
     };
 
-    const loaderSize =
+    const spinnerSize =
       typeof size === "string" && !!sizes[size]
         ? sizes[size]
         : typeof size === "string" && !sizes[size] && !isNaN(parseInt(size))
@@ -30,13 +30,13 @@ const Loader = React.memo(
 
     return (
       <div
-        // className={`h-[${loaderSize}px] w-[${loaderSize}px] bg-white border-blue-100 border-t-blue-500 border-4 rounded-[50%] animate-spin`}
+        // className={`h-[${spinnerSize}px] w-[${spinnerSize}px] bg-white border-blue-100 border-t-blue-500 border-4 rounded-[50%] animate-spin`}
 
-        style={{ width: loaderSize, height: loaderSize }}
+        style={{ width: spinnerSize, height: spinnerSize }}
         className={`${baseStyle} border-2 rounded-[50%] animate-spin ${className}`}
       ></div>
     );
   }
 );
 
-export default Loader;
+export default Spinner;
