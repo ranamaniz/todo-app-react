@@ -18,6 +18,7 @@ const Button = React.memo(
   }: ButtonProps) => {
     return (
       <button
+     
         onClick={onClick}
         className={`relative bg-blue-500 text-white px-10 py-3 rounded-md box-border  ${
           isLoading ? "bg-gray-400" : ""

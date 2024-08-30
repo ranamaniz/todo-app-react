@@ -14,7 +14,7 @@ const Todo = ({ todo, onUpdateTodo, onRemoveTodo }: TODO_ITEM_PROPS) => {
     >
       <input
         type="checkbox"
-        checked={!!todo.isComplete}
+        defaultChecked={!!todo.isComplete}
         id={todo._id.toString()}
         className="mr-2 hover:cursor-pointer "
         onClick={() => onUpdateTodo(todo._id)}

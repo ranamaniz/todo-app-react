@@ -40,7 +40,6 @@ const AddTodoBar = ({ onAddTodo, isLoading }: AddTodoProps) => {
         disabled={isLoading}
         onClick={handleAddTodo}
         isLoading={isLoading}
-        // className="flex-shrink-0  w-36"
       >
         Add
       </Button>

@@ -168,9 +168,9 @@ const Todos = () => {
   };
   return (
     <article className="flex justify-Hello tcenter flex-col px-6 py-4 ">
-      <h1 className="text-center text-slate-900 text-lg bold">Tasks</h1>
+      {/* <h1 className="text-center text-slate-900 text-lg bold">Tasks</h1> */}
 
-      <section className="flex justify-center relative my-4">
+      <section className="flex justify-center relative ">
         {(isLoading.updating || isLoading.fetching) && (
           <Spinner className="absolute top-1/2 left1/2 -translate-1/2 z-10" />
         )}
