@@ -9,7 +9,7 @@ const ErrorPage = () => {
       {isRouteErrorResponse(error) ? (
         <>
           <h1>{error.statusText} </h1>
-          <p>{error?.error?.message} </p>
+          {/* <p>{error?.error?.message} </p> */}
         </>
       ) : (
         <>Sorry, something went wrong</>
