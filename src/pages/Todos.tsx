@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
-import { TODOS } from "../types";
 import toast, { Toaster } from "react-hot-toast";
-import { AddTodoBar, Todo } from "../components/Todo";
+import { getTodos } from "../api/todos/todoServices";
 import { Spinner } from "../components/Spinner";
+import { AddTodoBar, Todo } from "../components/Todo";
+import useFetch from "../hooks/useFetch";
+import { TODOS, USE_FETCH_RESPONSE } from "../types";
 
 type IS_LOADING = {
   fetching: boolean;
@@ -27,24 +29,32 @@ const Todos = () => {
   //   }
   // };
 
-  const getTodos = async () => {
-    try {
-      setIsLoading((prevIsLoading) => ({ ...prevIsLoading, fetching: true }));
-      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/todos`, {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-      });
+  // const getTodos = async () => {
+  //   try {
+  //     setIsLoading((prevIsLoading) => ({ ...prevIsLoading, fetching: true }));
+  //     const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/todos`, {
+  //       method: "GET",
+  //       headers: { "Content-Type": "application/json" },
+  //     });
 
-      const data = await res.json();
-      console.log(data);
-      setTodos(data?.payload);
-    } catch (e) {
-      console.log(e);
-      toast.error("Sorry, couldn't fetch todos");
-    } finally {
-      setIsLoading((prevIsLoading) => ({ ...prevIsLoading, fetching: false }));
-    }
-  };
+  //     const data = await res.json();
+  //     console.log(data);
+  //     setTodos(data?.data);
+  //   } catch (e) {
+  //     console.log(e);
+  //     toast.error("Sorry, couldn't fetch todos");
+  //   } finally {
+  //     setIsLoading((prevIsLoading) => ({ ...prevIsLoading, fetching: false }));
+  //   }
+  // };
+
+  const {
+    data: todosData,
+    isLoading: isLoadingTodos,
+    error: todosError,
+  }: USE_FETCH_RESPONSE<TODOS> = useFetch(getTodos);
+
+  console.log(todosData);
 
   const updateTodos = useCallback(
     (todos: TODOS) => {
@@ -57,9 +67,8 @@ const Todos = () => {
   useEffect(() => {
     // get todos from local storage
     // getLocalStorageTodos();
-
     // if user logged in get data from db
-    getTodos();
+    // getTodos();
   }, []);
 
   const handleAddTodo = useCallback(
@@ -81,7 +90,7 @@ const Todos = () => {
 
         console.log(data);
 
-        const updatedTodos = [...todos, data.payload];
+        const updatedTodos = [...todos, data.data];
 
         updateTodos(updatedTodos);
         // setTodoInput("");
@@ -114,7 +123,7 @@ const Todos = () => {
       toast.success("Successfully removed the todo item");
 
       setTodos((todos) => {
-        return todos.filter((todo) => todo._id !== data.payload._id);
+        return todos.filter((todo) => todo._id !== data.data._id);
       });
     } catch (e) {
       console.log(e);
@@ -171,7 +180,7 @@ const Todos = () => {
       {/* <h1 className="text-center text-slate-900 text-lg bold">Tasks</h1> */}
 
       <section className="flex justify-center relative ">
-        {(isLoading.updating || isLoading.fetching) && (
+        {(isLoading.updating || isLoadingTodos) && (
           <Spinner className="absolute top-1/2 left1/2 -translate-1/2 z-10" />
         )}
         <section
@@ -182,7 +191,7 @@ const Todos = () => {
           <AddTodoBar onAddTodo={handleAddTodo} isLoading={isLoading.adding} />
 
           <ul className="w-full bg-slate-50 border-slate-400 border-solid rounded-md h-[calc(100vh_-_200px)] overflow-y-auto my-4 ">
-            {isLoading.fetching && <p className="px-4 py-4">Loading...</p>}
+            {isLoadingTodos && <p className="px-4 py-4">Loading...</p>}
 
             {(!Array.isArray(todos) || !todos || todos.length === 0) && (
               <p className="italic text-slate-500 font-extralight text-sm px-4 py-4 ">
@@ -190,8 +199,8 @@ const Todos = () => {
               </p>
             )}
 
-            {Array.isArray(todos) &&
-              todos.map((todo) => (
+            {!!todosData &&
+              todosData.map((todo) => (
                 <Todo
                   key={todo._id}
                   todo={todo}
