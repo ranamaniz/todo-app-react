@@ -31,7 +31,7 @@ const useFetch = <T>(
           ...prevData,
           isLoading: false,
           success: false,
-          message: err instanceof Error? err.message:"Unknown error"
+          message: err instanceof Error ? err.message : "Unknown error",
           error: err,
         }));
       }
