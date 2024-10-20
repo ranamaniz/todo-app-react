@@ -21,6 +21,7 @@ const useFetch = <T>(
 
         console.log(resData);
 
+        // will need to create global state
         setData((prevData) => ({
           ...prevData,
           isLoading: false,

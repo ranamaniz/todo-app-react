@@ -54,7 +54,13 @@ const Todos = () => {
     error: todosError,
   }: USE_FETCH_RESPONSE<TODOS> = useFetch(getTodos);
 
-  console.log(todosData);
+  console.log("todosData", todosData);
+
+  useEffect(() => {
+    if (todosData) {
+      setTodos(todosData);
+    }
+  }, [todosData]);
 
   const updateTodos = useCallback(
     (todos: TODOS) => {
@@ -88,11 +94,12 @@ const Todos = () => {
 
         const data = await res.json();
 
-        console.log(data);
+        console.log("add todo data", data);
 
-        const updatedTodos = [...todos, data.data];
+        setTodos((prevTodos) => [...prevTodos, data.data]);
 
-        updateTodos(updatedTodos);
+        // const updatedTodos = [...todos, data.data];
+        // updateTodos(updatedTodos);
         // setTodoInput("");
 
         toast.success("Successfully added todo");
@@ -122,8 +129,8 @@ const Todos = () => {
 
       toast.success("Successfully removed the todo item");
 
-      setTodos((todos) => {
-        return todos.filter((todo) => todo._id !== data.data._id);
+      setTodos((prevTodos) => {
+        return prevTodos.filter((todo) => todo._id !== data.data._id);
       });
     } catch (e) {
       console.log(e);
@@ -198,9 +205,9 @@ const Todos = () => {
                 Add some tasks you would like to do today...
               </p>
             )}
-
-            {!!todosData &&
-              todosData.map((todo) => (
+            {/* {console.log(todo)} */}
+            {todos.length !== 0 &&
+              todos.map((todo) => (
                 <Todo
                   key={todo._id}
                   todo={todo}
