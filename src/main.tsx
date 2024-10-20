@@ -2,7 +2,11 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import {
+  createBrowserRouter,
+  Navigate,
+  RouterProvider,
+} from "react-router-dom";
 import ErrorPage from "./pages/ErrorPage.tsx";
 import Todos from "./pages/Todos.tsx";
 import Signup from "./pages/account/Signup.tsx";
@@ -12,7 +16,10 @@ const router = createBrowserRouter([
     path: "/",
     element: <App />,
     errorElement: <ErrorPage />,
-    children: [{ path: "todos", element: <Todos /> }],
+    children: [
+      { path: "", element: <Navigate to="todos" replace /> },
+      { path: "todos", element: <Todos /> },
+    ],
   },
   { path: "signup", element: <Signup /> },
 ]);

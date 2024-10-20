@@ -2,7 +2,12 @@ import React from "react";
 
 type INPUT_PROPS = {
   label: string;
+  error: string;
 } & React.InputHTMLAttributes<HTMLInputElement>;
+
+{
+  /* TODO: add view password icon */
+}
 
 const Input = React.memo(
   ({
@@ -11,10 +16,10 @@ const Input = React.memo(
     id,
     value,
     type = "text",
+    error = "",
     onChange,
     ...rest
   }: INPUT_PROPS) => {
-    console.log("name", name);
     return (
       <div className="flex flex-col gap-1">
         <label htmlFor={id}>{label}</label>
@@ -27,6 +32,7 @@ const Input = React.memo(
           onChange={onChange}
           {...rest}
         />
+        {!!error && <p className="text-red-800 ">{error}</p>}
       </div>
     );
   }
