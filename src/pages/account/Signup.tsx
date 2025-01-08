@@ -9,17 +9,13 @@ type SIGNUP_FORM_VALUES = {
 };
 
 type SIGNUP_FORM_ERRORS = {
-  email: string;
-  password: string;
-  confirmPassword: string;
+  email?: string;
+  password?: string;
+  confirmPassword?: string;
 };
 
 const INITIAL_SIGNUP_VALUES = { email: "", password: "", confirmPassword: "" };
-const INITIAL_SIGNUP_ERRORS = {
-  email: "",
-  password: "",
-  confirmPassword: "",
-};
+const INITIAL_SIGNUP_ERRORS = {};
 
 const Signup = () => {
   const [formValues, setFormValues] = useState<SIGNUP_FORM_VALUES>(
@@ -48,10 +44,10 @@ const Signup = () => {
               [name]: "Invalid email address",
             }));
           } else {
-            setFormErrors((prevErrors) => ({
-              ...prevErrors,
-              [name]: "",
-            }));
+            setFormErrors((prevErrors) => {
+              const { [name]: _, ...updatedErrors } = prevErrors;
+              return updatedErrors;
+            });
           }
 
           break;
@@ -70,10 +66,10 @@ const Signup = () => {
               confirmPassword: "Password did not match",
             }));
           } else {
-            setFormErrors((prevErrors) => ({
-              ...prevErrors,
-              [name]: "",
-            }));
+            setFormErrors((prevErrors) => {
+              const { [name]: _, ...updatedErrors } = prevErrors;
+              return updatedErrors;
+            });
           }
 
           break;
@@ -86,10 +82,10 @@ const Signup = () => {
               [name]: "Password did not match",
             }));
           } else {
-            setFormErrors((prevErrors) => ({
-              ...prevErrors,
-              [name]: "",
-            }));
+            setFormErrors((prevErrors) => {
+              const { [name]: _, ...updatedErrors } = prevErrors;
+              return updatedErrors;
+            });
           }
 
           break;
@@ -101,7 +97,12 @@ const Signup = () => {
     [formValues]
   );
 
-  const handleSignup = () => {};
+  const handleSignup = () => {
+    console.log("formValues", formValues);
+    // TODO:
+    // post signup
+    // check if it has all the values
+  };
 
   const handleInputChange = useCallback(
     (e: React.FormEvent<HTMLInputElement>) => {
@@ -117,6 +118,10 @@ const Signup = () => {
 
   // TODO:validation / use of formik, yup
 
+  const canSubmit =
+    !Object.values(formValues).some((formValue) => formValue === "") &&
+    Object.keys(formErrors).length === 0;
+
   return (
     <section className="flex justify-center items-center h-screen">
       <form
@@ -130,7 +135,7 @@ const Signup = () => {
           type="email"
           value={formValues.email}
           onChange={(e) => handleInputChange(e)}
-          error={formErrors?.email}
+          error={formErrors?.email || ""}
         />
 
         {/* TODO: add view password icon */}
@@ -141,7 +146,7 @@ const Signup = () => {
           type="password"
           value={formValues.password}
           onChange={(e) => handleInputChange(e)}
-          error={formErrors?.password}
+          error={formErrors?.password || ""}
         />
         <Input
           label="Confirm Password"
@@ -150,10 +155,10 @@ const Signup = () => {
           type="password"
           value={formValues.confirmPassword}
           onChange={(e) => handleInputChange(e)}
-          error={formErrors?.confirmPassword}
+          error={formErrors?.confirmPassword || ""}
         />
 
-        <Button type="submit" onClick={handleSignup}>
+        <Button type="submit" onClick={handleSignup} disabled={canSubmit}>
           Submit
         </Button>
       </form>

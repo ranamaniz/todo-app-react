@@ -16,11 +16,13 @@ const Button = React.memo(
     className,
     ...props
   }: ButtonProps) => {
+    const { disabled } = props;
     return (
       <button
-     
         onClick={onClick}
-        className={`relative bg-blue-500 text-white px-10 py-3 rounded-md box-border  ${
+        className={`relative ${
+          disabled ? "bg-blue-300 cursor-not-allowed" : "bg-blue-500 "
+        } text-white px-10 py-3 rounded-md box-border  ${
           isLoading ? "bg-gray-400" : ""
         }  ${className ? className : ""}`}
         {...props}
