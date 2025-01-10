@@ -1,20 +1,35 @@
 import { useCallback, useState } from "react";
 import { Button } from "../../components/Button";
 import { Input } from "../../components/Input";
+import { registerUser } from "../../api/auth/authServices";
+import toast from "react-hot-toast";
 
-type SIGNUP_FORM_VALUES = {
+export type SIGNUP_FORM_VALUES = {
+  firstName: string;
+  lastName: string;
+  username: string;
   email: string;
   password: string;
   confirmPassword: string;
 };
 
 type SIGNUP_FORM_ERRORS = {
+  firstName?: string;
+  lastName?: string;
+  username?: string;
   email?: string;
   password?: string;
   confirmPassword?: string;
 };
 
-const INITIAL_SIGNUP_VALUES = { email: "", password: "", confirmPassword: "" };
+const INITIAL_SIGNUP_VALUES = {
+  firstName: "",
+  lastName: "",
+  username: "",
+  email: "",
+  password: "",
+  confirmPassword: "",
+};
 const INITIAL_SIGNUP_ERRORS = {};
 
 const Signup = () => {
@@ -26,6 +41,7 @@ const Signup = () => {
     INITIAL_SIGNUP_ERRORS
   );
 
+  // Todo: validation for username, firstname, lastname
   const validateForm = useCallback(
     (name: string, value: string) => {
       // eslint-disable-next-line no-useless-escape
@@ -97,11 +113,19 @@ const Signup = () => {
     [formValues]
   );
 
-  const handleSignup = () => {
-    console.log("formValues", formValues);
-    // TODO:
-    // post signup
-    // check if it has all the values
+  const handleSignup = async () => {
+    try {
+      console.log("formValues", formValues);
+      // TODO:
+      // post signup
+      // check if it has all the values
+
+      const res: any = await registerUser(formValues);
+      console.log("res", res);
+      toast.success(res?.message);
+    } catch (e: any) {
+      toast.error(e?.message);
+    }
   };
 
   const handleInputChange = useCallback(
@@ -128,6 +152,33 @@ const Signup = () => {
         onSubmit={(e) => e.preventDefault()}
         className="rounded-sm flex justify-center  flex-col gap-5 item bg-gray-50 w-[500px] p-6 text-gray-600   "
       >
+        <Input
+          label="First Name"
+          id="firstName"
+          name="firstName"
+          type="firstName"
+          value={formValues.firstName}
+          onChange={(e) => handleInputChange(e)}
+          error={formErrors?.firstName || ""}
+        />
+        <Input
+          label="Last Name"
+          id="lastName"
+          name="lastName"
+          type="lastName"
+          value={formValues.lastName}
+          onChange={(e) => handleInputChange(e)}
+          error={formErrors?.lastName || ""}
+        />
+        <Input
+          label="Username"
+          id="username"
+          name="username"
+          type="username"
+          value={formValues.username}
+          onChange={(e) => handleInputChange(e)}
+          error={formErrors?.username || ""}
+        />
         <Input
           label="Email"
           id="email"
@@ -158,7 +209,7 @@ const Signup = () => {
           error={formErrors?.confirmPassword || ""}
         />
 
-        <Button type="submit" onClick={handleSignup} disabled={canSubmit}>
+        <Button type="submit" onClick={handleSignup} disabled={!canSubmit}>
           Submit
         </Button>
       </form>
