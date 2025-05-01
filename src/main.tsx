@@ -10,7 +10,9 @@ import {
 import ErrorPage from "./pages/ErrorPage.tsx";
 import Todos from "./pages/Todos.tsx";
 import Signup from "./pages/account/Signup.tsx";
+import Login from "./pages/account/Login/index.tsx";
 
+// TODO: take it to separte place
 const router = createBrowserRouter([
   {
     path: "/",
@@ -22,6 +24,7 @@ const router = createBrowserRouter([
     ],
   },
   { path: "signup", element: <Signup /> },
+  { path: "login", element: <Login /> },
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")!).render(

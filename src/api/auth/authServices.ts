@@ -1,14 +1,31 @@
-import { SIGNUP_FORM_VALUES } from "../../pages/account/Signup";
-import { REGISTER_USER_URL } from "./authUrls";
+import { AUTHENTICATE_USER_URL, REGISTER_USER_URL } from "./authUrls";
+import { LOGIN_FORM_VALUES, SIGNUP_FORM_VALUES } from "./type";
 
 export const registerUser = async (data: SIGNUP_FORM_VALUES) => {
   try {
-    console.log("REGISTER_USER_URL", REGISTER_USER_URL)
-    const {confirmPassword, ...registerUserData}=data
+    console.log("REGISTER_USER_URL", REGISTER_USER_URL);
+    const { confirmPassword, ...registerUserData } = data;
     const res = await fetch(REGISTER_USER_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(registerUserData),
+    });
+
+    return res;
+  } catch (e) {
+    return e;
+  }
+};
+
+export const authenticateUser = async (data: LOGIN_FORM_VALUES) => {
+  try {
+    console.log("data", data);
+    const {} = data;
+    // TODO: may be create a api call for all post get add delete put methods
+    const res = await fetch(AUTHENTICATE_USER_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
     });
 
     return res;
