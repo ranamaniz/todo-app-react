@@ -1,10 +1,22 @@
 import { Link } from "react-router-dom";
 
 const NavigationBar = () => {
+  
+  // TODO: dhow login or signup only if not logged in 
+  const NAV_ITEMS = [
+    { label: "Tasks", redirectLink: "todos", active: true },
+    { label: "Signup", redirectLink: "signup", active: true },
+    { label: "Login", redirectLink: "login", active: true },
+  ];
+
+
   return (
-    <nav className="bg-indigo-500  flex justify-between py-4 px-6 text-white">
-      <Link to={"todos"}>TASKS</Link>
-      <Link to={"/signup"}>Sign up</Link>
+    <nav className="bg-indigo-500   py-4 px-6 text-white">
+      <ul className="flex gap-5 justify-end">
+        {NAV_ITEMS.map((navItem) => (
+          <Link to={navItem?.redirectLink}>{navItem.label}</Link>
+        ))}
+      </ul>
     </nav>
   );
 };
