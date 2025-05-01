@@ -11,25 +11,35 @@ export const registerUser = async (data: SIGNUP_FORM_VALUES) => {
       body: JSON.stringify(registerUserData),
     });
 
-    return res;
+    return await res.json();
   } catch (e) {
-    return e;
+    throw e;
   }
 };
 
 export const authenticateUser = async (data: LOGIN_FORM_VALUES) => {
   try {
     console.log("data", data);
-    const {} = data;
+
     // TODO: may be create a api call for all post get add delete put methods
-    const res = await fetch(AUTHENTICATE_USER_URL, {
+
+    // TODO: set type for the data to be provided. is there a way to do it automatically
+    const res: any = await fetch(AUTHENTICATE_USER_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
 
-    return res;
+    if (!res.ok) {
+      const resData = await res.json();
+
+      const errorMessage = resData?.message;
+      throw new Error(errorMessage || "Sorry could not login");
+    }
+    return await res.json();
   } catch (e) {
-    return e;
+    console.log("error", e);
+
+    throw e;
   }
 };

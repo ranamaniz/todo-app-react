@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 const NavigationBar = () => {
   
-  // TODO: dhow login or signup only if not logged in 
+  // TODO: show login or signup only if not logged in 
   const NAV_ITEMS = [
     { label: "Tasks", redirectLink: "todos", active: true },
     { label: "Signup", redirectLink: "signup", active: true },
