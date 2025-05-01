@@ -1,8 +1,7 @@
-import React from "react";
-
 type Props = {};
 
 const Login = (props: Props) => {
+  console.log(props);
   return <div>Login</div>;
 };
 

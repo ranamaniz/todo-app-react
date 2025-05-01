@@ -206,7 +206,8 @@ const Todos = () => {
               </p>
             )}
             {/* {console.log(todo)} */}
-            {todos.length !== 0 &&
+            {todos &&
+              todos.length !== 0 &&
               todos.map((todo) => (
                 <Todo
                   key={todo._id}
@@ -215,7 +216,12 @@ const Todos = () => {
                   onRemoveTodo={handleRemoveTodo}
                 />
               ))}
+
+            {/* TODO: setup global pop up message for error and success */}
+            {/* For now temp: */}
           </ul>
+
+          {!!todosError && <p>Sorry, something went wrong</p>}
         </section>
       </section>
       <Toaster />
