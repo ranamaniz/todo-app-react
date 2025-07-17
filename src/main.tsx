@@ -18,7 +18,7 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
     children: [
       { path: "", element: <Navigate to="todos" replace /> },
-      { path: "todos", element: <Todos /> },
+      { path: "/todos", element: <Todos /> },
     ],
   },
   { path: "signup", element: <Signup /> },
