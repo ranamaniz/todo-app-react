@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useId } from "react";
 
 type INPUT_PROPS = {
   label: string;
@@ -13,7 +13,7 @@ const Input = React.memo(
   ({
     label,
     name,
-    id,
+    id = useId(),
     value,
     type = "text",
     error = "",
@@ -24,7 +24,7 @@ const Input = React.memo(
       <div className="flex flex-col gap-1">
         <label htmlFor={id}>{label}</label>
         <input
-          className="rounded-sm px-1 py-2 focus:border-none "
+          className="rounded-sm px-1 py-2 focus:border-none border-s-black"
           type={type}
           id={id}
           name={name}

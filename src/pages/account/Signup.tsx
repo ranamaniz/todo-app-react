@@ -3,15 +3,8 @@ import { Button } from "../../components/Button";
 import { Input } from "../../components/Input";
 import { registerUser } from "../../api/auth/authServices";
 import toast from "react-hot-toast";
-
-export type SIGNUP_FORM_VALUES = {
-  firstName: string;
-  lastName: string;
-  username: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-};
+import { SIGNUP_FORM_VALUES } from "../../api/auth/type";
+import { useNavigate } from "react-router-dom";
 
 type SIGNUP_FORM_ERRORS = {
   firstName?: string;
@@ -40,6 +33,8 @@ const Signup = () => {
   const [formErrors, setFormErrors] = useState<SIGNUP_FORM_ERRORS>(
     INITIAL_SIGNUP_ERRORS
   );
+
+  const navigate = useNavigate();
 
   // Todo: validation for username, firstname, lastname
   const validateForm = useCallback(
@@ -123,6 +118,11 @@ const Signup = () => {
       const res: any = await registerUser(formValues);
       console.log("res", res);
       toast.success(res?.message);
+
+      // TODO: redirect to sign up double check
+      // may be send code to email/ send OTP or something research
+
+      navigate("/");
     } catch (e: any) {
       toast.error(e?.message);
     }
