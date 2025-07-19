@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { authenticateUser } from "../../../api/auth/authServices";
 import { Button } from "../../../components/Button";
 import { Input } from "../../../components/Input";
 import toast, { Toaster } from "react-hot-toast";
+import PublicLayout from "../../../layout/PublicLayout";
 
 const Login = () => {
   const [formValues, setFormValues] = useState({ email: "", password: "" });
@@ -36,6 +37,10 @@ const Login = () => {
       const data = await authenticateUser(formValues);
       console.log("data", data);
       if (data) {
+
+        // TODO: need to check acccess token if authenticated and set it
+        // also set refersh token
+        // and user info in the state
         navigate("/");
       }
     } catch (e: any) {
@@ -47,14 +52,13 @@ const Login = () => {
     }
   };
   return (
-    <section className="h-screen flex justify-center items-center rounded-md ">
-      <div className="bg-blue-200 p-4 ">
-        <h1> Login</h1>
-        <hr />
+    <PublicLayout>
+      <section className="flex justify-center flex-col align-items-center gap-5 bg-white shadow-md rounded-lg w-[500px] p-8 text-gray-600">
         <form
           onSubmit={(e) => e.preventDefault()}
-          className="flex flex-col gap-5  mt-4"
+          className="flex justify-center flex-col gap-2"
         >
+          <h1 className="self-center font-bold text-lg">Login</h1>
           <Input
             label="Email"
             name="email"
@@ -70,13 +74,24 @@ const Login = () => {
             error=""
             type="password"
           />
-          <Button type="submit" onClick={handleLogin}>
+          <Button type="submit" onClick={handleLogin} className="w-full mt-5">
             Login
           </Button>
+
+          <p>
+            Don't have an account?{" "}
+            <Link
+              to={{ pathname: "/signup" }}
+              className="underline text-blue-500 cursor-pointer"
+            >
+              Sign up
+            </Link>
+          </p>
         </form>
-      </div>
+      </section>
+
       <Toaster />
-    </section>
+    </PublicLayout>
   );
 };
 

@@ -4,7 +4,8 @@ import { Input } from "../../components/Input";
 import { registerUser } from "../../api/auth/authServices";
 import toast from "react-hot-toast";
 import { SIGNUP_FORM_VALUES } from "../../api/auth/type";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import PublicLayout from "../../layout/PublicLayout";
 
 type SIGNUP_FORM_ERRORS = {
   firstName?: string;
@@ -147,73 +148,90 @@ const Signup = () => {
     Object.keys(formErrors).length === 0;
 
   return (
-    <section className="flex justify-center items-center h-screen">
-      <form
-        onSubmit={(e) => e.preventDefault()}
-        className="rounded-sm flex justify-center  flex-col gap-5 item bg-gray-50 w-[500px] p-6 text-gray-600   "
-      >
-        <Input
-          label="First Name"
-          id="firstName"
-          name="firstName"
-          type="firstName"
-          value={formValues.firstName}
-          onChange={(e) => handleInputChange(e)}
-          error={formErrors?.firstName || ""}
-        />
-        <Input
-          label="Last Name"
-          id="lastName"
-          name="lastName"
-          type="lastName"
-          value={formValues.lastName}
-          onChange={(e) => handleInputChange(e)}
-          error={formErrors?.lastName || ""}
-        />
-        <Input
-          label="Username"
-          id="username"
-          name="username"
-          type="username"
-          value={formValues.username}
-          onChange={(e) => handleInputChange(e)}
-          error={formErrors?.username || ""}
-        />
-        <Input
-          label="Email"
-          id="email"
-          name="email"
-          type="email"
-          value={formValues.email}
-          onChange={(e) => handleInputChange(e)}
-          error={formErrors?.email || ""}
-        />
+    <PublicLayout>
+      <section className="flex justify-center flex-col align-items-center gap-5 bg-white shadow-md rounded-lg w-[500px] p-8 text-gray-600">
+        <h1 className="self-center font-bold text-lg">Sign up</h1>
+        <form
+          onSubmit={(e) => e.preventDefault()}
+          className="flex justify-center flex-col gap-2"
+        >
+          <Input
+            label="First Name"
+            id="firstName"
+            name="firstName"
+            type="firstName"
+            value={formValues.firstName}
+            onChange={(e) => handleInputChange(e)}
+            error={formErrors?.firstName || ""}
+          />
+          <Input
+            label="Last Name"
+            id="lastName"
+            name="lastName"
+            type="lastName"
+            value={formValues.lastName}
+            onChange={(e) => handleInputChange(e)}
+            error={formErrors?.lastName || ""}
+          />
+          <Input
+            label="Username"
+            id="username"
+            name="username"
+            type="username"
+            value={formValues.username}
+            onChange={(e) => handleInputChange(e)}
+            error={formErrors?.username || ""}
+          />
+          <Input
+            label="Email"
+            id="email"
+            name="email"
+            type="email"
+            value={formValues.email}
+            onChange={(e) => handleInputChange(e)}
+            error={formErrors?.email || ""}
+          />
 
-        {/* TODO: add view password icon */}
-        <Input
-          label="Password"
-          id="password"
-          name="password"
-          type="password"
-          value={formValues.password}
-          onChange={(e) => handleInputChange(e)}
-          error={formErrors?.password || ""}
-        />
-        <Input
-          label="Confirm Password"
-          id="confirmPassword"
-          name="confirmPassword"
-          type="password"
-          value={formValues.confirmPassword}
-          onChange={(e) => handleInputChange(e)}
-          error={formErrors?.confirmPassword || ""}
-        />
+          {/* TODO: add view password icon */}
+          <Input
+            label="Password"
+            id="password"
+            name="password"
+            type="password"
+            value={formValues.password}
+            onChange={(e) => handleInputChange(e)}
+            error={formErrors?.password || ""}
+          />
+          <Input
+            label="Confirm Password"
+            id="confirmPassword"
+            name="confirmPassword"
+            type="password"
+            value={formValues.confirmPassword}
+            onChange={(e) => handleInputChange(e)}
+            error={formErrors?.confirmPassword || ""}
+          />
 
-        <Button type="submit" onClick={handleSignup} disabled={!canSubmit}>
-          Submit
-        </Button>
-      </form>
-    </section>
+          <Button
+            type="submit"
+            onClick={handleSignup}
+            disabled={!canSubmit}
+            className="w-full mt-5"
+          >
+            Submit
+          </Button>
+        </form>
+        <p>
+          Already have an account?{" "}
+          <Link
+            to={{ pathname: "/login" }}
+            className="underline text-blue-500 cursor-pointer"
+          >
+            Sign in
+          </Link>
+        </p>
+      </section>
+    </PublicLayout>
   );
 };
 

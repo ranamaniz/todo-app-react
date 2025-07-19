@@ -9,6 +9,7 @@ type INPUT_PROPS = {
   /* TODO: add view password icon */
 }
 
+// TODO: use ref
 const Input = React.memo(
   ({
     label,
@@ -24,7 +25,7 @@ const Input = React.memo(
       <div className="flex flex-col gap-1">
         <label htmlFor={id}>{label}</label>
         <input
-          className="rounded-sm px-1 py-2 focus:border-none border-s-black"
+          className="rounded-md px-1 py-2 border border-gray-300 focus:border-indigo-500"
           type={type}
           id={id}
           name={name}
